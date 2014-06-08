@@ -8,7 +8,50 @@
 int MAX = 255;
 int nextid;
 
+//메인함수
+int main(void)
+{
 
+	Info* nextinfo;
+	int j = 0;
+
+	nextinfo = (Info*)malloc(sizeof(Info)*MAX);
+	for (j = 0; j < MAX; j++)
+	{
+		nextinfo[j].id = -1;
+	}
+
+	readfile(nextinfo);
+
+	int selected = 0;
+
+	while (selected != 7)
+	{
+		fflush(stdin);
+		selected = menu();
+
+		switch (selected)
+		{
+		case '1':
+			printlist(nextinfo);
+			break;
+		case '2':
+			addmember(nextinfo);
+			break;
+		case '3':
+			savelist(nextinfo);
+			break;
+		default:
+			printf("1-7까지 숫자 중 입력하셔야 합니다. 다시 메뉴를 선택하시려면 아무거나 누르세요.");
+			fflush(stdin);
+			_getch();
+			break;
+		}
+	}
+
+}
+
+//메뉴화면
 int menu()
 {
 	char select;
@@ -45,7 +88,7 @@ int menu()
 
 	return select;
 }
-
+ //datafile읽어오기
 void readfile(Info* nextinfo)
 {
 
@@ -75,7 +118,7 @@ void readfile(Info* nextinfo)
 	fclose(fp);
 
 }
-
+//menu로 돌아가기
 void returntomenu(void)
 {
 	char userinput;
@@ -94,7 +137,7 @@ void returntomenu(void)
 		returntomenu();
 	}
 }
-
+//1. 회원정보보기
 void printlist(Info* nextinfo)
 {
 	system("cls");
@@ -110,7 +153,7 @@ void printlist(Info* nextinfo)
 
 	returntomenu();
 }
-
+//2. 회원추가하기
 void addmember(Info* nextinfo)
 {
 	int i = 0, j = 0, k = 0;
@@ -168,7 +211,7 @@ void addmember(Info* nextinfo)
 
 	returntomenu();
 }
-
+//3. 회원저장하기
 void savelist(Info* nextinfo)
 {
 	FILE *fp;
@@ -186,47 +229,64 @@ void savelist(Info* nextinfo)
 
 	returntomenu();
 }
-
-int main(void)
+//4. 회원수정하기
+void updatelist(Info* nextinfo)
+{
+	printf
+}
+//5. 회원삭제하기
+void deletemember(Info* nextinfo)
 {
 
-	Info* nextinfo;
-	int j = 0;
-
-	nextinfo = (Info*)malloc(sizeof(Info)*MAX);
-	for (j = 0; j < MAX; j++)
-	{
-		nextinfo[j].id = -1;
-	}
-
-	readfile(nextinfo);
-
-	int selected = 0;
-
-	while (selected != 7)
-	{
-		fflush(stdin);
-		selected = menu();
-
-		switch (selected)
-		{
-		case '1':
-			printlist(nextinfo);
-			break;
-		case '2':
-			addmember(nextinfo);
-			break;
-		case '3':
-			savelist(nextinfo);
-			break;
-		default:
-			printf("1-7까지 숫자 중 입력하셔야 합니다. 다시 메뉴를 선택하시려면 아무거나 누르세요.");
-			fflush(stdin);
-			_getch();
-			break;
-		}
-	}
-	
 }
+//6. 회원검색하기
+void searchmember(Info* nextinfo)
+{
 
+}
+// ID로 검색
+void searchById(Info* nextinfo)
+{
+	int temp = 0;
+	int i = 0;
 
+	printf("찾으실 ID를 입력하세요: ");
+	gets(temp);
+
+	while (nextinfo[i].id != -1)
+	{
+		if (nextinfo->id == temp)
+		{
+			printf("회원ID:%d", nextinfo[i].id);
+			printf("회원이름:%s", nextinfo[i].name);
+			printf("회원주소:%s", nextinfo[i].address);
+			pirntf("회원휴대폰번호:%s", nextinfo[i].phonenum);
+		}
+		else
+			i++;
+	}
+}
+// 이름으로 검색
+void searchByName(Info* nextinfo)
+{
+	int temp = 0;
+	int i = 0;
+
+	printf("찾으실 이름를 입력하세요: ");
+	gets(temp);
+
+	while (nextinfo[i].name != -1)
+	{
+		if (nextinfo->id == temp)
+		{
+			printf("회원ID:%d", nextinfo[i].id);
+			printf("회원이름:%s", nextinfo[i].name);
+			printf("회원주소:%s", nextinfo[i].address);
+			pirntf("회원휴대폰번호:%s", nextinfo[i].phonenum);
+		}
+		else
+			i++;
+	}
+
+}
+//7. 종료하기 

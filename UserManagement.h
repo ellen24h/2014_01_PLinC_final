@@ -10,5 +10,16 @@ typedef struct info{
 
 }Info;
 
+void readfile(Info* nextinfo);
+int menu();
+void returntomenu(void);
+
+void printlist(Info* nextinfo);
+void addmember(Info* nextinfo);
+void savelist(Info* nextinfo);
+void updatelist(Info* nextinfo);
+void deletemember(Info* nextinfo);
+
+
 #endif
 
