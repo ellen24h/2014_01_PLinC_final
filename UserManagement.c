@@ -25,10 +25,11 @@ int main(void)
 
 	int selected = 0;
 
-	while (selected != 7)
+	while (selected != '7')
 	{
 		fflush(stdin);
 		selected = menu();
+		fflush(stdin);
 
 		switch (selected)
 		{
@@ -41,12 +42,25 @@ int main(void)
 		case '3':
 			savelist(nextinfo);
 			break;
+		case '4':
+			searchmember(nextinfo);
+			break;
+		case '5':
+			updatelist(nextinfo);
+			break;
+		case'6':
+			deletemember(nextinfo);
+			break;
+		case'7':
+			exitprogram(nextinfo);
+			return 0;
 		default:
 			printf("1-7까지 숫자 중 입력하셔야 합니다. 다시 메뉴를 선택하시려면 아무거나 누르세요.");
-			fflush(stdin);
-			_getch();
+
+			getch();
 			break;
 		}
+		returntomenu(nextinfo);
 	}
 
 }
@@ -109,6 +123,8 @@ void readfile(Info* nextinfo)
 	while (!feof(fp))
 	{
 		fscanf(fp, "%d\t%[^\t]\t%[^\t]\t%[^\n]", &nextinfo[i].id, nextinfo[i].name, nextinfo[i].address, nextinfo[i].phonenum);
+		if (nextinfo[i].id == -1)
+			break;
 		nextid = nextinfo[i].id + 1;
 		i++;
 	}
@@ -134,7 +150,6 @@ void returntomenu(void)
 	else
 	{
 		printf("잘못 입력하셨습니다.");
-		returntomenu();
 	}
 }
 //1. 회원정보보기
@@ -147,11 +162,15 @@ void printlist(Info* nextinfo)
 
 	while (nextinfo[j].id != -1)
 	{
+		if (nextinfo[j].id == 0)
+		{
+			j++;
+			continue;
+		}
 		printf("%d\t%s\t\t%s\t\t\t%s\n", nextinfo[j].id, nextinfo[j].name, nextinfo[j].address, nextinfo[j].phonenum);
 		j++;
 	}
 
-	returntomenu();
 }
 //2. 회원추가하기
 void addmember(Info* nextinfo)
@@ -181,16 +200,19 @@ void addmember(Info* nextinfo)
 
 	printf("회원 이름: ");
 	fflush(stdin);
-	gets(nextinfo[i].name);
+	scanf("%19s",nextinfo[i].name);
+	fflush(stdin);
 
 	printf("회원 주소: ");
-	gets(nextinfo[i].address);
+	scanf("%99s", nextinfo[i].address);
+	fflush(stdin);
 	int trueorfalse = 1;
 
 	while (1)
 	{
 		printf("회원 휴대폰번호: ");
-		gets(nextinfo[i].phonenum);
+		scanf("%19s", nextinfo[i].phonenum);
+		fflush(stdin);
 		
 		for (k = 0; k < strlen(nextinfo[i].phonenum); k++){
 			if ((nextinfo[i].phonenum[k] >= '0' && nextinfo[i].phonenum[k] <= '9') || nextinfo[i].phonenum[k] == '-'){
@@ -208,8 +230,6 @@ void addmember(Info* nextinfo)
 		else
 			break;
 	}
-
-	returntomenu();
 }
 //3. 회원저장하기
 void savelist(Info* nextinfo)
@@ -219,74 +239,265 @@ void savelist(Info* nextinfo)
 
 	for (int i = 1; i < MAX; i++)
 	{
-		if (nextinfo[i].id != -1)
-			fprintf(fp, "%d\t%s\t\t%s\t\t\t%s\n", nextinfo[i].id, nextinfo[i].name, nextinfo[i].address, nextinfo[i].phonenum);
-		else
+		if (nextinfo[i].id == -1)
 			break;
+
+		if (nextinfo[i].id != 0)
+			fprintf(fp, "%d\t%s\t\t%s\t\t\t%s\n", nextinfo[i].id, nextinfo[i].name, nextinfo[i].address, nextinfo[i].phonenum);
 	}
 
 	fclose(fp);
 
-	returntomenu();
 }
 //4. 회원수정하기
 void updatelist(Info* nextinfo)
 {
-	printf
+	system("cls");
+	int index;
+	char select;
+
+	printf("어떤 정보로 검색하시겠습니까?\n");
+	printf("1: ID로 검색\n");
+	printf("2: 이름으로 검색\n");
+	printf("m: 메뉴로 돌아가기\n");
+
+
+	scanf("%c", &select);
+	fflush(stdin);
+
+	while (select != 'm')
+	{
+
+		switch (select)
+		{
+		case'1':
+			index = searchById(nextinfo);
+			editmember(nextinfo, index);
+			break;
+		case'2':
+			index = searchByName(nextinfo);
+			editmember(nextinfo, index);
+			break;
+		case'm':
+			menu();
+			break;
+		default:
+			printf("1,2,m 중 하나를 입력하셔야 합니다.");
+			fflush(stdin);
+			break;
+		}
+		scanf("%c", &select);
+	}
+
+
 }
+//수정하기
+void editmember(Info* nextinfo, int index)
+{
+	char input;
+	printf("어떤 정보를 수정하시겠습니까?\n");
+
+	printf("1: ID 수정\n");
+	printf("2: 이름 수정\n");
+	printf("3: 주소 수정\n");
+	printf("4: 휴대폰번호 수정\n");
+	printf("m: 메뉴로 돌아가기\n");
+	scanf("%c", &input);
+	fflush(stdin);
+
+	switch (input)
+	{
+	case'1':
+		printf("수정할 ID를 입력하세요: ");
+		scanf("%d", &nextinfo[index].id);
+		fflush(stdin);
+		break;
+	case'2':
+		printf("수정할 이름을 입력하세요: ");
+		scanf("%19s", nextinfo[index].name);
+		fflush(stdin);
+		break;
+	case'3':
+		printf("수정할 주소를 입력하세요: ");
+		scanf("%99s", nextinfo[index].address);
+		fflush(stdin);
+		break;
+	case'4':
+		printf("수정할 휴대폰번호를 입력하세요: ");
+		scanf("%19s", nextinfo[index].phonenum);
+		fflush(stdin);
+		break;
+	case'm':
+		menu();
+		break;
+	default:
+		printf("1-4,m중에서 하나를 입력하셔야 합니다.");
+		editmember(nextinfo, index);
+	}
+}
+
 //5. 회원삭제하기
 void deletemember(Info* nextinfo)
 {
+	system("cls");
+	int index;
+	char select;
+
+	printf("어떤 정보로 검색하시겠습니까?\n");
+	printf("1: ID로 검색\n");
+	printf("2: 이름으로 검색\n");
+	printf("m: 메뉴로 돌아가기\n");
+
+
+	scanf("%c", &select);
+	fflush(stdin);
+
+	while (select != 'm')
+	{
+
+		switch (select)
+		{
+		case'1':
+			index = searchById(nextinfo);
+			printf("삭제하시겠습니까?y/n");
+			scanf("%c", &select);
+			fflush(stdin);
+			if (select == 'y')
+			{
+				nextinfo[index].id = 0;
+				printf("삭제되었습니다!\n");
+			}
+			break;
+		case'2':
+			index = searchByName(nextinfo);
+			printf("삭제하시겠습니까?y/n");
+			scanf("%c", &select);
+			fflush(stdin);
+			if (select == 'y')
+			{
+				nextinfo[index].id = 0;
+				printf("삭제되었습니다!\n");
+			}
+			break;
+		case'm':
+			menu();
+			break;
+		default:
+			printf("1,2,m 중 하나를 입력하셔야 합니다.");
+			fflush(stdin);
+			break;
+		}
+		scanf("%c", &select);
+	}
 
 }
+
 //6. 회원검색하기
 void searchmember(Info* nextinfo)
 {
+	system("cls");
+	char select;
 
+	printf("어떤 정보로 검색하시겠습니까?\n");
+	printf("1: ID로 검색\n");
+	printf("2: 이름으로 검색\n");
+	printf("m: 메뉴로 돌아가기\n");
+
+	scanf("%c", &select);
+	fflush(stdin);
+
+	while (select != 'm')
+	{
+
+		switch (select)
+		{
+		case'1': 
+			searchById(nextinfo);
+			break;
+		case'2':
+			searchByName(nextinfo);
+			break;
+		case'm':
+			menu();
+			break;
+		default:
+			printf("1,2,m 중 하나를 입력하셔야 합니다.");
+			fflush(stdin);
+			break;
+		}
+		scanf("%c", &select);
+	}
 }
 // ID로 검색
-void searchById(Info* nextinfo)
+int searchById(Info* nextinfo)
 {
-	int temp = 0;
-	int i = 0;
+	int id = 0;
+	int index = 0;
 
 	printf("찾으실 ID를 입력하세요: ");
-	gets(temp);
+	scanf("%d", &id);
+	fflush(stdin);
 
-	while (nextinfo[i].id != -1)
+	while (nextinfo[index].id != -1)
 	{
-		if (nextinfo->id == temp)
+		if (nextinfo[index].id != 0 && nextinfo[index].id == id)
 		{
-			printf("회원ID:%d", nextinfo[i].id);
-			printf("회원이름:%s", nextinfo[i].name);
-			printf("회원주소:%s", nextinfo[i].address);
-			pirntf("회원휴대폰번호:%s", nextinfo[i].phonenum);
+			printf("회원ID:%d\n", nextinfo[index].id);
+			printf("회원이름:%s\n", nextinfo[index].name);
+			printf("회원주소:%s\n", nextinfo[index].address);
+			printf("회원휴대폰번호:%s\n", nextinfo[index].phonenum);
+			break;
 		}
-		else
-			i++;
+		index++;
 	}
+
+	return index;
 }
 // 이름으로 검색
-void searchByName(Info* nextinfo)
+int searchByName(Info* nextinfo)
 {
-	int temp = 0;
-	int i = 0;
+	char name[16];
+	int index = 0;
 
 	printf("찾으실 이름를 입력하세요: ");
-	gets(temp);
+	gets(name);
 
-	while (nextinfo[i].name != -1)
+	while (nextinfo[index].id != -1)
 	{
-		if (nextinfo->id == temp)
+		if (nextinfo[index].id != 0 && strcmp(nextinfo[index].name, name) == 0)
 		{
-			printf("회원ID:%d", nextinfo[i].id);
-			printf("회원이름:%s", nextinfo[i].name);
-			printf("회원주소:%s", nextinfo[i].address);
-			pirntf("회원휴대폰번호:%s", nextinfo[i].phonenum);
+			printf("회원ID:%d\n", nextinfo[index].id);
+			printf("회원이름:%s\n", nextinfo[index].name);
+			printf("회원주소:%s\n", nextinfo[index].address);
+			printf("회원휴대폰번호:%s\n", nextinfo[index].phonenum);
+			break;
 		}
-		else
-			i++;
+		index++;
 	}
 
+	if (nextinfo[index].id == -1)
+	{
+		printf("검색 결과가 없습니다. 다시 입력해주세요.\n");
+		return searchByName(nextinfo);
+	}
+
+
+	return index;
 }
 //7. 종료하기 
+void exitprogram(Info* nextinfo)
+{
+	char input;
+	printf("저장하고 종료하시겠습니까? y/n : ");
+	scanf("%c", &input);
+	fflush(stdin);
+
+	if (input == 'y')
+	{
+		savelist(nextinfo);
+		printf("성공적으로 저장되었습니다. 종료하시려면 아무키나 누르세요.\n");
+		getch();
+	}
+	
+}
+	
