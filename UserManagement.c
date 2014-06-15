@@ -48,10 +48,10 @@ int main(void)
 		case '5':
 			updatelist(nextinfo);
 			break;
-		case'6':
+		case '6':
 			deletemember(nextinfo);
 			break;
-		case'7':
+		case '7':
 			exitprogram(nextinfo);
 			return 0;
 		default:
@@ -76,7 +76,7 @@ int menu()
 	printf("┃                                                                          ┃\n");
 	printf("┃                       /회/원/관/리/프/로/그/램/                          ┃\n");
 	printf("┃                                                                          ┃\n");
-	printf("┃                                                              Ver0.1_Ellen┃\n");
+	printf("┃                                                              Ver1.0_Ellen┃\n");
 	printf("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n");
 	printf("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n");
 	printf("┃                                                                          ┃\n");
@@ -120,6 +120,7 @@ void readfile(Info* nextinfo)
 
 	int i = 0;
 
+
 	while (!feof(fp))
 	{
 		fscanf(fp, "%d\t%[^\t]\t%[^\t]\t%[^\n]", &nextinfo[i].id, nextinfo[i].name, nextinfo[i].address, nextinfo[i].phonenum);
@@ -158,7 +159,7 @@ void printlist(Info* nextinfo)
 	system("cls");
 
 	int j = 0;
-	printf("회원아이디\t회원이름\t회원주소\t\t회원휴대폰번호\n");
+	printf("ID\tNAME\t\tADRESS\t\t\t\t\tPHONENUMBER\n");
 
 	while (nextinfo[j].id != -1)
 	{
@@ -304,6 +305,7 @@ void editmember(Info* nextinfo, int index)
 	printf("m: 메뉴로 돌아가기\n");
 	scanf("%c", &input);
 	fflush(stdin);
+
 
 	switch (input)
 	{
